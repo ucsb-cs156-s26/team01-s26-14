@@ -1,4 +1,4 @@
-package edu.ucsb.cs156.example.jobs;
+package edu.ucsb.cs156.example.testconfig;
 
 import edu.ucsb.cs156.example.services.jobs.JobContext;
 import edu.ucsb.cs156.example.services.jobs.JobContextConsumer;
@@ -18,6 +18,11 @@ public class TestJob implements JobContextConsumer {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     ctx.log("Hello World! from test job!");
+    if (authentication == null) {
+      ctx.log("authentication is null");
+    } else {
+      ctx.log("authentication is not null");
+    }
     Thread.sleep(sleepMs);
     if (fail) {
       throw new Exception("Fail!");

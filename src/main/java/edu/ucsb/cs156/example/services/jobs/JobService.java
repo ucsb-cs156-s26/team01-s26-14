@@ -15,6 +15,7 @@ public class JobService {
   @Autowired private CurrentUserService currentUserService;
 
   @Lazy @Autowired private JobService self;
+  @Autowired private JobContextFactory jobContextFactory;
 
   public Job runAsJob(JobContextConsumer jobFunction) {
     Job job = Job.builder().createdBy(currentUserService.getUser()).status("running").build();
@@ -27,7 +28,7 @@ public class JobService {
 
   @Async
   public void runJobAsync(Job job, JobContextConsumer jobFunction) {
-    JobContext context = new JobContext(jobsRepository, job);
+    JobContext context = jobContextFactory.createContext(job);
 
     try {
       jobFunction.accept(context);

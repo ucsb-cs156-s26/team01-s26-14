@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucsb.cs156.example.entities.Job;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
-import edu.ucsb.cs156.example.jobs.TestJob;
 import edu.ucsb.cs156.example.repositories.JobsRepository;
 import edu.ucsb.cs156.example.services.jobs.JobService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,17 +69,6 @@ public class JobsController extends ApiController {
     }
     jobsRepository.deleteById(id);
     return Map.of("message", String.format("Job with id %d deleted", id));
-  }
-
-  @Operation(summary = "Launch Test Job (click fail if you want to test exception handling)")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @PostMapping("/launch/testjob")
-  public Job launchTestJob(
-      @Parameter(name = "fail") @RequestParam Boolean fail,
-      @Parameter(name = "sleepMs") @RequestParam Integer sleepMs) {
-
-    TestJob testJob = TestJob.builder().fail(fail).sleepMs(sleepMs).build();
-    return jobService.runAsJob(testJob);
   }
 
   @Operation(summary = "Get long job logs")
