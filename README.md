@@ -16,11 +16,11 @@ TODO: Fill in this table with correct information.
 | Table                     | Name         | Github Id |
 |---------------------------|--------------|-----------|
 | UCSBDiningCommonsMenuItem | Nathan             |  ncontreras1         |
-| UCSBOrganization          | Benny             |           |
+| UCSBOrganization          | Benny             |  BennyZll         |
 | RecommendationRequest     | Abhijeet         |  AbhijeetDutta1         |
 | MenuItemReview            | Brian            | brianridderucsb          |
 | HelpRequest               | Vishva             | VishvaAr          |
-| Articles                  | Alessandro              |           |
+| Articles                  | Alessandro              | AlessandroBA          |
 
 Remember though, that in spite of these initial  assignments, it is still
 a team project.  Please help other team members to finish their work
