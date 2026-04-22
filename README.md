@@ -15,11 +15,11 @@ TODO: Fill in this table with correct information.
 
 | Table                     | Name         | Github Id |
 |---------------------------|--------------|-----------|
-| UCSBDiningCommonsMenuItem | Nathan             |           |
+| UCSBDiningCommonsMenuItem | Nathan             |  ncontreras1         |
 | UCSBOrganization          | Benny             |           |
-| RecommendationRequest     | Abhijeet         |           |
-| MenuItemReview            | Brian            |           |
-| HelpRequest               | Vishva             |           |
+| RecommendationRequest     | Abhijeet         |  AbhijeetDutta1         |
+| MenuItemReview            | Brian            | brianridderucsb          |
+| HelpRequest               | Vishva             | VishvaAr          |
 | Articles                  | Alessandro              |           |
 
 Remember though, that in spite of these initial  assignments, it is still
