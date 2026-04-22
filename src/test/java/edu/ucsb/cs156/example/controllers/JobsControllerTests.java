@@ -81,7 +81,7 @@ public class JobsControllerTests extends ControllerTestCase {
     // act
 
     MvcResult response =
-        mockMvc.perform(get("/api/jobs?id=1")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/jobs").param("id", "1")).andExpect(status().isOk()).andReturn();
 
     // assert
 
@@ -103,7 +103,10 @@ public class JobsControllerTests extends ControllerTestCase {
     // act
 
     MvcResult response =
-        mockMvc.perform(get("/api/jobs?id=2")).andExpect(status().isNotFound()).andReturn();
+        mockMvc
+            .perform(get("/api/jobs").param("id", "2"))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
     // assert
 
@@ -179,7 +182,7 @@ public class JobsControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/jobs?id=1").with(csrf()))
+            .perform(delete("/api/jobs").param("id", "1").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -202,7 +205,7 @@ public class JobsControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/jobs?id=2").with(csrf()))
+            .perform(delete("/api/jobs").param("id", "2").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 

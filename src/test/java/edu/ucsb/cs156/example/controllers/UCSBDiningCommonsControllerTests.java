@@ -53,7 +53,7 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
   @Test
   public void logged_out_users_cannot_get_by_id() throws Exception {
     mockMvc
-        .perform(get("/api/ucsbdiningcommons?code=carrillo"))
+        .perform(get("/api/ucsbdiningcommons").param("code", "carrillo"))
         .andExpect(status().is(403)); // logged out users can't get by id
   }
 
@@ -62,14 +62,34 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
 
   @Test
   public void logged_out_users_cannot_post() throws Exception {
-    mockMvc.perform(post("/api/ucsbdiningcommons/post")).andExpect(status().is(403));
+    mockMvc
+        .perform(
+            post("/api/ucsbdiningcommons/post")
+                .param("name", "Ortega")
+                .param("code", "ortega")
+                .param("hasSackMeal", "true")
+                .param("hasTakeOutMeal", "true")
+                .param("hasDiningCam", "true")
+                .param("latitude", "34.410987")
+                .param("longitude", "-119.84709")
+                .with(csrf()))
+        .andExpect(status().is(403));
   }
 
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_regular_users_cannot_post() throws Exception {
     mockMvc
-        .perform(post("/api/ucsbdiningcommons/post"))
+        .perform(
+            post("/api/ucsbdiningcommons/post")
+                .param("name", "Ortega")
+                .param("code", "ortega")
+                .param("hasSackMeal", "true")
+                .param("hasTakeOutMeal", "true")
+                .param("hasDiningCam", "true")
+                .param("latitude", "34.410987")
+                .param("longitude", "-119.84709")
+                .with(csrf()))
         .andExpect(status().is(403)); // only admins can post
   }
 
@@ -97,7 +117,7 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/ucsbdiningcommons?code=carrillo"))
+            .perform(get("/api/ucsbdiningcommons").param("code", "carrillo"))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -120,7 +140,7 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/ucsbdiningcommons?code=munger-hall"))
+            .perform(get("/api/ucsbdiningcommons").param("code", "munger-hall"))
             .andExpect(status().isNotFound())
             .andReturn();
 
@@ -199,7 +219,14 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/ucsbdiningcommons/post?name=Ortega&code=ortega&hasSackMeal=true&hasTakeOutMeal=true&hasDiningCam=true&latitude=34.410987&longitude=-119.84709")
+                post("/api/ucsbdiningcommons/post")
+                    .param("name", "Ortega")
+                    .param("code", "ortega")
+                    .param("hasSackMeal", "true")
+                    .param("hasTakeOutMeal", "true")
+                    .param("hasDiningCam", "true")
+                    .param("latitude", "34.410987")
+                    .param("longitude", "-119.84709")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
@@ -232,7 +259,7 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/ucsbdiningcommons?code=portola").with(csrf()))
+            .perform(delete("/api/ucsbdiningcommons").param("code", "portola").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -255,7 +282,7 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/ucsbdiningcommons?code=munger-hall").with(csrf()))
+            .perform(delete("/api/ucsbdiningcommons").param("code", "munger-hall").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
@@ -301,7 +328,8 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/ucsbdiningcommons?code=carrillo")
+                put("/api/ucsbdiningcommons")
+                    .param("code", "carrillo")
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("utf-8")
                     .content(requestBody)
@@ -341,7 +369,8 @@ public class UCSBDiningCommonsControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/ucsbdiningcommons?code=munger-hall")
+                put("/api/ucsbdiningcommons")
+                    .param("code", "munger-hall")
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("utf-8")
                     .content(requestBody)

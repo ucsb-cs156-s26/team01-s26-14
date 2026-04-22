@@ -54,7 +54,7 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
   @Test
   public void logged_out_users_cannot_get_by_id() throws Exception {
     mockMvc
-        .perform(get("/api/ucsbdates?id=7"))
+        .perform(get("/api/ucsbdates").param("id", "7"))
         .andExpect(status().is(403)); // logged out users can't get by id
   }
 
@@ -63,14 +63,26 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
 
   @Test
   public void logged_out_users_cannot_post() throws Exception {
-    mockMvc.perform(post("/api/ucsbdates/post")).andExpect(status().is(403));
+    mockMvc
+        .perform(
+            post("/api/ucsbdates/post")
+                .param("name", "firstDayOfClasses")
+                .param("quarterYYYYQ", "20222")
+                .param("localDateTime", "2022-01-03T00:00:00")
+                .with(csrf()))
+        .andExpect(status().is(403));
   }
 
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_regular_users_cannot_post() throws Exception {
     mockMvc
-        .perform(post("/api/ucsbdates/post"))
+        .perform(
+            post("/api/ucsbdates/post")
+                .param("name", "firstDayOfClasses")
+                .param("quarterYYYYQ", "20222")
+                .param("localDateTime", "2022-01-03T00:00:00")
+                .with(csrf()))
         .andExpect(status().is(403)); // only admins can post
   }
 
@@ -94,7 +106,10 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
 
     // act
     MvcResult response =
-        mockMvc.perform(get("/api/ucsbdates?id=7")).andExpect(status().isOk()).andReturn();
+        mockMvc
+            .perform(get("/api/ucsbdates").param("id", "7"))
+            .andExpect(status().isOk())
+            .andReturn();
 
     // assert
 
@@ -114,7 +129,10 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
 
     // act
     MvcResult response =
-        mockMvc.perform(get("/api/ucsbdates?id=7")).andExpect(status().isNotFound()).andReturn();
+        mockMvc
+            .perform(get("/api/ucsbdates").param("id", "7"))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
     // assert
 
@@ -184,7 +202,10 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/ucsbdates/post?name=firstDayOfClasses&quarterYYYYQ=20222&localDateTime=2022-01-03T00:00:00")
+                post("/api/ucsbdates/post")
+                    .param("name", "firstDayOfClasses")
+                    .param("quarterYYYYQ", "20222")
+                    .param("localDateTime", "2022-01-03T00:00:00")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
@@ -215,7 +236,7 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/ucsbdates?id=15").with(csrf()))
+            .perform(delete("/api/ucsbdates").param("id", "15").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -238,7 +259,7 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(delete("/api/ucsbdates?id=15").with(csrf()))
+            .perform(delete("/api/ucsbdates").param("id", "15").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
@@ -278,7 +299,8 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/ucsbdates?id=67")
+                put("/api/ucsbdates")
+                    .param("id", "67")
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("utf-8")
                     .content(requestBody)
@@ -315,7 +337,8 @@ public class UCSBDatesControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/ucsbdates?id=67")
+                put("/api/ucsbdates")
+                    .param("id", "67")
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("utf-8")
                     .content(requestBody)

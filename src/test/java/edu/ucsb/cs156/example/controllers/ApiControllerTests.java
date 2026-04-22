@@ -33,7 +33,10 @@ public class ApiControllerTests extends ControllerTestCase {
 
     // act
     MvcResult response =
-        mockMvc.perform(get("/dummycontroller?id=1")).andExpect(status().isOk()).andReturn();
+        mockMvc
+            .perform(get("/dummycontroller").param("id", "1"))
+            .andExpect(status().isOk())
+            .andReturn();
 
     // assert
 
@@ -45,7 +48,10 @@ public class ApiControllerTests extends ControllerTestCase {
 
     // act
     MvcResult response =
-        mockMvc.perform(get("/dummycontroller?id=7")).andExpect(status().isNotFound()).andReturn();
+        mockMvc
+            .perform(get("/dummycontroller").param("id", "7"))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
     // assert
 
