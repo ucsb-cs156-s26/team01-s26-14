@@ -10,7 +10,7 @@ on:
   workflow_dispatch:  # Allows manual triggering
 
 env:
-  PAT: ${{ secrets.PAT }}
+  PAT: ${{ secrets.CLASSIC_PAT }}
   TEAM_TO_CHANNEL: ${{vars.TEAM_TO_CHANNEL}}
   ORG_NAME: ${{ github.repository_owner }}
   REPO_NAME: ${{ github.event.repository.name }}
