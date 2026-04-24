@@ -38,10 +38,10 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   /**
    * Create a new dining commons menu item
    *
-   * @param diningcommonscode the name of the dining commons
+   * @param diningCommonsCode the name of the dining commons
    * @param name the name of the item
    * @param station the name of the item's station
-   * @return the saved ucsddiningcommonsmenuitem
+   * @return the saved ucsbdiningcommonsmenuitem
    */
   @Operation(summary = "Create a new dining commons menu item")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
