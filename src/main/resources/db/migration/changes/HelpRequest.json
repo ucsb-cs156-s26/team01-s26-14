@@ -60,7 +60,7 @@
                   {
                     "column": {
                       "name": "EXPLANATION",
-                      "type": "TEXT"
+                      "type": "VARCHAR(255)"
                     }
                   },
                   {
