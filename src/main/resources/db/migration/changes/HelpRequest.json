@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "HELPREQUESTS"
+                    "tableName": "help_requests"
                   }
                 }
               ]
@@ -70,7 +70,7 @@
                     }
                   }
                 ],
-                "tableName": "HELPREQUESTS"
+                "tableName": "help_requests"
               }
             }
           ]
