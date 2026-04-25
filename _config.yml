@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/team01-s26-14
 owner: ucsb-cs156-s26
 repo_name: team01-s26-14
-pull_requests: [{"author":{"id":"U_kgDOCVIAYQ","is_bot":false,"login":"ncontreras1","name":""},"headRefName":"Nathan-UCSBDiningCommonsMenuItem-add-get-show","number":49,"title":"Add getByID to UCSBDiningCommonsMenuItem DB","url":"https://github.com/ucsb-cs156-s26/team01-s26-14/pull/49"}]
+pull_requests: []
