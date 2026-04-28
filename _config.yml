@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/team01-s26-14
 owner: ucsb-cs156-s26
 repo_name: team01-s26-14
-pull_requests: [{"author":{"id":"U_kgDODhRx4g","is_bot":false,"login":"AlessandroBa","name":"Alessandro"},"headRefName":"ale-delete-for-article-table","number":58,"title":"add delete endpoint to articles controller; tests will be in th…","url":"https://github.com/ucsb-cs156-s26/team01-s26-14/pull/58"}]
+pull_requests: []
