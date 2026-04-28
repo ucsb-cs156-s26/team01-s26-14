@@ -47,12 +47,12 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;&quot;)
   public UCSBOrganization getById(@Parameter(name = &quot;orgCode&quot;) @RequestParam String orgCode) {
-<span class="nc" id="L50">    UCSBOrganization organization =</span>
+<span class="fc" id="L50">    UCSBOrganization organization =</span>
         ucsbOrganizationRepository
-<span class="nc" id="L52">            .findById(orgCode)</span>
-<span class="nc" id="L53">            .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganization.class, orgCode));</span>
+<span class="fc" id="L52">            .findById(orgCode)</span>
+<span class="fc" id="L53">            .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganization.class, orgCode));</span>
 
-<span class="nc" id="L55">    return organization;</span>
+<span class="fc" id="L55">    return organization;</span>
   }
 
   /**
