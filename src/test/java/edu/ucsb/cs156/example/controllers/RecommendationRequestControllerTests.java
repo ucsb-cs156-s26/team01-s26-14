@@ -237,4 +237,150 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
+
+  // Authorization tests for /api/recommendationrequests (PUT)
+
+  @Test
+  public void logged_out_users_cannot_update() throws Exception {
+    mockMvc
+        .perform(
+            put("/api/recommendationrequests?id=1")
+                .contentType("application/json")
+                .content(
+                    """
+                    {
+                        "id": 1,
+                        "requesterEmail": "test@example.com",
+                        "professorEmail": "professor@example.com",
+                        "explanation": "Updated explanation",
+                        "dateRequested": "2022-01-03T00:00:00",
+                        "dateNeeded": "2022-03-03T00:00:00",
+                        "done": false
+                    }
+                    """)
+                .with(csrf()))
+        .andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_regular_users_cannot_update() throws Exception {
+    mockMvc
+        .perform(
+            put("/api/recommendationrequests?id=1")
+                .contentType("application/json")
+                .content(
+                    """
+                    {
+                        "id": 1,
+                        "requesterEmail": "test@example.com",
+                        "professorEmail": "professor@example.com",
+                        "explanation": "Updated explanation",
+                        "dateRequested": "2022-01-03T00:00:00",
+                        "dateNeeded": "2022-03-03T00:00:00",
+                        "done": false
+                    }
+                    """)
+                .with(csrf()))
+        .andExpect(status().is(403)); // only admins can update
+  }
+
+  // Tests with mocks for database actions
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void an_admin_user_can_update_a_recommendation_request() throws Exception {
+    // arrange
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2022-03-03T00:00:00");
+
+    RecommendationRequest originalRequest =
+        RecommendationRequest.builder()
+            .id(1L)
+            .requesterEmail("original@example.com")
+            .professorEmail("originalProf@example.com")
+            .explanation("Original explanation")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(false)
+            .build();
+
+    RecommendationRequest updatedRequest =
+        RecommendationRequest.builder()
+            .id(1L)
+            .requesterEmail("updated@example.com")
+            .professorEmail("updatedProf@example.com")
+            .explanation("Updated explanation")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(true)
+            .build();
+
+    when(recommendationRequestRepository.findById(1L))
+        .thenReturn(java.util.Optional.of(originalRequest));
+    when(recommendationRequestRepository.save(eq(updatedRequest))).thenReturn(updatedRequest);
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/recommendationrequests?id=1")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "id": 1,
+                            "requesterEmail": "updated@example.com",
+                            "professorEmail": "updatedProf@example.com",
+                            "explanation": "Updated explanation",
+                            "dateRequested": "2022-01-03T00:00:00",
+                            "dateNeeded": "2022-03-03T00:00:00",
+                            "done": true
+                        }
+                        """)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(1L);
+    verify(recommendationRequestRepository, times(1)).save(updatedRequest);
+    String expectedJson = mapper.writeValueAsString(updatedRequest);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void an_admin_user_cannot_update_when_not_found() throws Exception {
+    // arrange
+    when(recommendationRequestRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/recommendationrequests?id=1")
+                    .contentType("application/json")
+                    .content(
+                        """
+                        {
+                            "id": 1,
+                            "requesterEmail": "updated@example.com",
+                            "professorEmail": "updatedProf@example.com",
+                            "explanation": "Updated explanation",
+                            "dateRequested": "2022-01-03T00:00:00",
+                            "dateNeeded": "2022-03-03T00:00:00",
+                            "done": true
+                        }
+                        """)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(1L);
+    String responseString = response.getResponse().getContentAsString();
+    assertTrue(responseString.contains("EntityNotFoundException"));
+  }
 }
