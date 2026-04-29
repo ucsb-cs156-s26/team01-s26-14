@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
@@ -197,5 +198,97 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
     Map<String, Object> json = responseToJson(response);
     assertEquals("EntityNotFoundException", json.get("type"));
     assertEquals("UCSBOrganization with id munger-hall not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_organization() throws Exception {
+    // arrange
+
+    UCSBOrganization existingOrganization =
+        UCSBOrganization.builder()
+            .orgCode("DSClub")
+            .orgTranslationShort("DSC")
+            .orgTranslation("Data Science Club")
+            .inactive(false)
+            .build();
+
+    UCSBOrganization incomingOrganization =
+        UCSBOrganization.builder()
+            .orgCode("DifferentCode")
+            .orgTranslationShort("DSC//")
+            .orgTranslation("Data Science Club//")
+            .inactive(true)
+            .build();
+
+    UCSBOrganization expectedOrganization =
+        UCSBOrganization.builder()
+            .orgCode("DSClub")
+            .orgTranslationShort("DSC//")
+            .orgTranslation("Data Science Club//")
+            .inactive(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(incomingOrganization);
+
+    when(ucsbOrganizationRepository.findById(eq("DSClub")))
+        .thenReturn(Optional.of(existingOrganization));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/ucsborganization")
+                    .param("orgCode", "DSClub")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById(eq("DSClub"));
+    verify(ucsbOrganizationRepository, times(1)).save(expectedOrganization);
+
+    String expectedJson = mapper.writeValueAsString(expectedOrganization);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_organization_that_does_not_exist() throws Exception {
+    // arrange
+
+    UCSBOrganization editedOrganization =
+        UCSBOrganization.builder()
+            .orgCode("DSClub")
+            .orgTranslationShort("DSC//")
+            .orgTranslation("Data Science Club//")
+            .inactive(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(editedOrganization);
+
+    when(ucsbOrganizationRepository.findById(eq("DSClub"))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/ucsborganization")
+                    .param("orgCode", "DSClub")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("DSClub");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id DSClub not found", json.get("message"));
   }
 }
