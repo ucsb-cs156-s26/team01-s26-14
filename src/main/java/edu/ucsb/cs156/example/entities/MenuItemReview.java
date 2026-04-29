@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "menuitemreviews")
+@Entity(name = "MenuItemReview")
 public class UCSBDate {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
