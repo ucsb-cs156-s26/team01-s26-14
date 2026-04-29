@@ -3,6 +3,7 @@ package edu.ucsb.cs156.example.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -375,6 +376,79 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                         }
                         """)
                     .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(1L);
+    String responseString = response.getResponse().getContentAsString();
+    assertTrue(responseString.contains("EntityNotFoundException"));
+  }
+
+  // Authorization tests for /api/recommendationrequests (DELETE)
+
+  @Test
+  public void logged_out_users_cannot_delete() throws Exception {
+    mockMvc
+        .perform(delete("/api/recommendationrequests?id=1").with(csrf()))
+        .andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_regular_users_cannot_delete() throws Exception {
+    mockMvc
+        .perform(delete("/api/recommendationrequests?id=1").with(csrf()))
+        .andExpect(status().is(403)); // only admins can delete
+  }
+
+  // Tests with mocks for database actions
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void an_admin_user_can_delete_a_recommendation_request() throws Exception {
+    // arrange
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2022-03-03T00:00:00");
+
+    RecommendationRequest request1 =
+        RecommendationRequest.builder()
+            .id(1L)
+            .requesterEmail("test@example.com")
+            .professorEmail("professor@example.com")
+            .explanation("Need recommendation for grad school")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt2)
+            .done(false)
+            .build();
+
+    when(recommendationRequestRepository.findById(1L)).thenReturn(java.util.Optional.of(request1));
+    doNothing().when(recommendationRequestRepository).delete(request1);
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/recommendationrequests?id=1").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(1L);
+    verify(recommendationRequestRepository, times(1)).delete(request1);
+    String responseString = response.getResponse().getContentAsString();
+    assertTrue(responseString.contains("RecommendationRequest with id 1 deleted"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void an_admin_user_cannot_delete_when_not_found() throws Exception {
+    // arrange
+    when(recommendationRequestRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/recommendationrequests?id=1").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
