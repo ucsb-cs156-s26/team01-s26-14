@@ -291,4 +291,57 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
     Map<String, Object> json = responseToJson(response);
     assertEquals("UCSBOrganization with id DSClub not found", json.get("message"));
   }
+
+  // Authorization tests for /api/ucsbdiningcommons/post
+  // (Perhaps should also have these for put and delete)
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_delete_a_date() throws Exception {
+    // arrange
+
+    UCSBOrganization DSClub =
+        UCSBOrganization.builder()
+            .orgCode("DSClub")
+            .orgTranslationShort("DSC")
+            .orgTranslation("Data Science Club")
+            .inactive(false)
+            .build();
+
+    when(ucsbOrganizationRepository.findById(eq("DSClub"))).thenReturn(Optional.of(DSClub));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/ucsborganization").param("orgCode", "DSClub").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("DSClub");
+    verify(ucsbOrganizationRepository, times(1)).delete(any());
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id DSClub deleted", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_tries_to_delete_non_existant_commons_and_gets_right_error_message()
+      throws Exception {
+    // arrange
+
+    when(ucsbOrganizationRepository.findById(eq("DSClub"))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/ucsborganization").param("orgCode", "DSClub").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(ucsbOrganizationRepository, times(1)).findById("DSClub");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id DSClub not found", json.get("message"));
+  }
 }
