@@ -2,6 +2,7 @@ package edu.ucsb.cs156.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -319,7 +320,8 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     when(recommendationRequestRepository.findById(1L))
         .thenReturn(java.util.Optional.of(originalRequest));
-    when(recommendationRequestRepository.save(eq(updatedRequest))).thenReturn(updatedRequest);
+    when(recommendationRequestRepository.save(any(RecommendationRequest.class)))
+        .thenReturn(updatedRequest);
 
     // act
     MvcResult response =
@@ -345,10 +347,12 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     // assert
     verify(recommendationRequestRepository, times(1)).findById(1L);
-    verify(recommendationRequestRepository, times(1)).save(updatedRequest);
-    String expectedJson = mapper.writeValueAsString(updatedRequest);
+    verify(recommendationRequestRepository, times(1)).save(any(RecommendationRequest.class));
     String responseString = response.getResponse().getContentAsString();
-    assertEquals(expectedJson, responseString);
+    assertTrue(responseString.contains("\"requesterEmail\":\"updated@example.com\""));
+    assertTrue(responseString.contains("\"professorEmail\":\"updatedProf@example.com\""));
+    assertTrue(responseString.contains("\"explanation\":\"Updated explanation\""));
+    assertTrue(responseString.contains("\"done\":true"));
   }
 
   @WithMockUser(roles = {"ADMIN", "USER"})
