@@ -134,4 +134,23 @@ import org.springframework.web.bind.annotation.RestController;
 <span class="fc" id="L134">    return menuItemReview;</span>
   }
 }
+//   /**
+//    * Delete a menu item review
+//    *
+//    * @param id the id of the menu item review to delete
+//    * @return a message indicating the menu item review was deleted
+//    */
+//   @Operation(summary = &quot;Delete a menu item review&quot;)
+//   @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+//   @DeleteMapping(&quot;&quot;)
+//   public Object deleteMenuItemReview(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
+//     MenuItemReview menuItemReview =
+//         menuItemReviewRepository
+//             .findById(id)
+//             .orElseThrow(() -&gt; new EntityNotFoundException(MenuItemReview.class, id));
+
+//     menuItemReviewRepository.delete(menuItemReview);
+//     return genericMessage(&quot;menu item review with id %s deleted&quot;.formatted(id));
+//   }
+// }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
