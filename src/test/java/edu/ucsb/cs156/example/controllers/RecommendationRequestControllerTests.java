@@ -348,6 +348,8 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     assertTrue(responseString.contains("\"professorEmail\":\"updatedProf@example.com\""));
     assertTrue(responseString.contains("\"explanation\":\"Updated explanation\""));
     assertTrue(responseString.contains("\"done\":true"));
+    assertTrue(responseString.contains("\"dateRequested\":\"2023-06-15T00:00:00\""));
+    assertTrue(responseString.contains("\"dateNeeded\":\"2023-09-01T00:00:00\""));
   }
 
   @WithMockUser(roles = {"ADMIN", "USER"})
