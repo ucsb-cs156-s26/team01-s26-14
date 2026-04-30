@@ -226,17 +226,17 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
 
     MenuItemReview menuItemReviewOrig =
         MenuItemReview.builder()
-            .itemId(12)
-            .reviewerEmail("liljit@gmail.com")
-            .stars(5)
+            .itemId(33)
+            .reviewerEmail("grant@ymail.com")
+            .stars(2)
             .dateReviewed(ldt1)
-            .comments("great")
+            .comments("grdfdfdeat")
             .build();
 
     MenuItemReview menuItemReviewEdited =
         MenuItemReview.builder()
-            .itemId(12)
-            .reviewerEmail("liljit@gmail.com")
+            .itemId(99)
+            .reviewerEmail("yasuo@gmail.com")
             .stars(1)
             .dateReviewed(ldt2)
             .comments("nevermind, it was terrible")
@@ -276,9 +276,9 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
 
     MenuItemReview editedMenuItemReview =
         MenuItemReview.builder()
-            .itemId(12)
-            .reviewerEmail("liljit@gmail.com")
-            .stars(1)
+            .itemId(77)
+            .reviewerEmail("lskdjflskdfjit@ymail.com")
+            .stars(3)
             .dateReviewed(ldt1)
             .comments("nevermind, it was terrible")
             .build();
