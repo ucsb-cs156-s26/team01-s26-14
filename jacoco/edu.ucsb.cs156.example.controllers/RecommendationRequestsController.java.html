@@ -2,6 +2,7 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = &quot;RecommendationRequests&quot;)
 @RequestMapping(&quot;/api/recommendationrequests&quot;)
 @RestController
-<span class="fc" id="L24">@Slf4j</span>
-<span class="fc" id="L25">public class RecommendationRequestsController extends ApiController {</span>
+<span class="fc" id="L25">@Slf4j</span>
+<span class="fc" id="L26">public class RecommendationRequestsController extends ApiController {</span>
 
   @Autowired RecommendationRequestRepository recommendationRequestRepository;
 
@@ -35,8 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;/all&quot;)
   public Iterable&lt;RecommendationRequest&gt; allRecommendationRequests() {
-<span class="fc" id="L38">    Iterable&lt;RecommendationRequest&gt; requests = recommendationRequestRepository.findAll();</span>
-<span class="fc" id="L39">    return requests;</span>
+<span class="fc" id="L39">    Iterable&lt;RecommendationRequest&gt; requests = recommendationRequestRepository.findAll();</span>
+<span class="fc" id="L40">    return requests;</span>
   }
 
   /**
@@ -73,17 +74,35 @@ import org.springframework.web.bind.annotation.RestController;
       throws JsonProcessingException {
 
     RecommendationRequest request =
-<span class="fc" id="L76">        RecommendationRequest.builder()</span>
-<span class="fc" id="L77">            .requesterEmail(requesterEmail)</span>
-<span class="fc" id="L78">            .professorEmail(professorEmail)</span>
-<span class="fc" id="L79">            .explanation(explanation)</span>
-<span class="fc" id="L80">            .dateRequested(dateRequested)</span>
-<span class="fc" id="L81">            .dateNeeded(dateNeeded)</span>
-<span class="fc" id="L82">            .done(done)</span>
-<span class="fc" id="L83">            .build();</span>
+<span class="fc" id="L77">        RecommendationRequest.builder()</span>
+<span class="fc" id="L78">            .requesterEmail(requesterEmail)</span>
+<span class="fc" id="L79">            .professorEmail(professorEmail)</span>
+<span class="fc" id="L80">            .explanation(explanation)</span>
+<span class="fc" id="L81">            .dateRequested(dateRequested)</span>
+<span class="fc" id="L82">            .dateNeeded(dateNeeded)</span>
+<span class="fc" id="L83">            .done(done)</span>
+<span class="fc" id="L84">            .build();</span>
 
-<span class="fc" id="L85">    RecommendationRequest savedRequest = recommendationRequestRepository.save(request);</span>
-<span class="fc" id="L86">    return savedRequest;</span>
+<span class="fc" id="L86">    RecommendationRequest savedRequest = recommendationRequestRepository.save(request);</span>
+<span class="fc" id="L87">    return savedRequest;</span>
+  }
+
+  /**
+   * Get a single recommendation request by id
+   *
+   * @param id the id of the recommendation request
+   * @return a RecommendationRequest
+   */
+  @Operation(summary = &quot;Get a single recommendation request&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;&quot;)
+  public RecommendationRequest getById(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L100">    RecommendationRequest recommendationRequest =</span>
+        recommendationRequestRepository
+<span class="fc" id="L102">            .findById(id)</span>
+<span class="fc" id="L103">            .orElseThrow(() -&gt; new EntityNotFoundException(RecommendationRequest.class, id));</span>
+
+<span class="fc" id="L105">    return recommendationRequest;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
