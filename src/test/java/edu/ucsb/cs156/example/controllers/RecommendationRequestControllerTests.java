@@ -296,7 +296,6 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     RecommendationRequest originalRequest =
         RecommendationRequest.builder()
-            .id(1L)
             .requesterEmail("original@example.com")
             .professorEmail("originalProf@example.com")
             .explanation("Original explanation")
@@ -307,7 +306,6 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     RecommendationRequest updatedRequest =
         RecommendationRequest.builder()
-            .id(1L)
             .requesterEmail("updated@example.com")
             .professorEmail("updatedProf@example.com")
             .explanation("Updated explanation")
@@ -316,28 +314,20 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
             .done(true)
             .build();
 
-    when(recommendationRequestRepository.findById(1L))
+    String requestBody = mapper.writeValueAsString(updatedRequest);
+
+    when(recommendationRequestRepository.findById(eq(1L)))
         .thenReturn(java.util.Optional.of(originalRequest));
-    when(recommendationRequestRepository.save(eq(updatedRequest))).thenReturn(updatedRequest);
 
     // act
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/recommendationrequests?id=1")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "id": 1,
-                            "requesterEmail": "updated@example.com",
-                            "professorEmail": "updatedProf@example.com",
-                            "explanation": "Updated explanation",
-                            "dateRequested": "2022-01-03T00:00:00",
-                            "dateNeeded": "2022-03-03T00:00:00",
-                            "done": true
-                        }
-                        """)
+                put("/api/recommendationrequests")
+                    .param("id", "1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
@@ -345,42 +335,42 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     // assert
     verify(recommendationRequestRepository, times(1)).findById(1L);
     verify(recommendationRequestRepository, times(1)).save(updatedRequest);
-    String expectedJson = mapper.writeValueAsString(updatedRequest);
     String responseString = response.getResponse().getContentAsString();
-    assertEquals(expectedJson, responseString);
+    assertEquals(requestBody, responseString);
   }
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
   public void an_admin_user_cannot_update_when_not_found() throws Exception {
     // arrange
-    when(recommendationRequestRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+    RecommendationRequest updatedRequest =
+        RecommendationRequest.builder()
+            .requesterEmail("updated@example.com")
+            .professorEmail("updatedProf@example.com")
+            .explanation("Updated explanation")
+            .done(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(updatedRequest);
+    when(recommendationRequestRepository.findById(eq(1L))).thenReturn(java.util.Optional.empty());
 
     // act
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/recommendationrequests?id=1")
-                    .contentType("application/json")
-                    .content(
-                        """
-                        {
-                            "id": 1,
-                            "requesterEmail": "updated@example.com",
-                            "professorEmail": "updatedProf@example.com",
-                            "explanation": "Updated explanation",
-                            "dateRequested": "2022-01-03T00:00:00",
-                            "dateNeeded": "2022-03-03T00:00:00",
-                            "done": true
-                        }
-                        """)
+                put("/api/recommendationrequests")
+                    .param("id", "1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
                     .with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
     // assert
     verify(recommendationRequestRepository, times(1)).findById(1L);
-    String responseString = response.getResponse().getContentAsString();
-    assertTrue(responseString.contains("EntityNotFoundException"));
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("EntityNotFoundException", json.get("type"));
+    assertEquals("RecommendationRequest with id 1 not found", json.get("message"));
   }
 }
