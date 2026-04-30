@@ -324,8 +324,6 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     when(recommendationRequestRepository.findById(eq(1L)))
         .thenReturn(java.util.Optional.of(originalRequest));
-    when(recommendationRequestRepository.save(any(RecommendationRequest.class)))
-        .thenReturn(updatedRequest);
 
     // act
     MvcResult response =
@@ -342,12 +340,9 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     // assert
     verify(recommendationRequestRepository, times(1)).findById(1L);
-    verify(recommendationRequestRepository, times(1)).save(any(RecommendationRequest.class));
+    verify(recommendationRequestRepository, times(1)).save(updatedRequest);
     String responseString = response.getResponse().getContentAsString();
-    assertTrue(responseString.contains("\"requesterEmail\":\"updated@example.com\""));
-    assertTrue(responseString.contains("\"professorEmail\":\"updatedProf@example.com\""));
-    assertTrue(responseString.contains("\"explanation\":\"Updated explanation\""));
-    assertTrue(responseString.contains("\"done\":true"));
+    assertEquals(requestBody, responseString);
   }
 
   @WithMockUser(roles = {"ADMIN", "USER"})
