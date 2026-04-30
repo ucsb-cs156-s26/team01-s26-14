@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/team01-s26-14
 owner: ucsb-cs156-s26
 repo_name: team01-s26-14
-pull_requests: [{"author":{"id":"U_kgDOCNoJ1w","is_bot":false,"login":"brianridderucsb","name":""},"headRefName":"Brian-Get-Single-Record","number":71,"title":"Intial commit for 4th issue","url":"https://github.com/ucsb-cs156-s26/team01-s26-14/pull/71"},{"author":{"id":"U_kgDOCujYag","is_bot":false,"login":"AbhijeetDutta1","name":"Abhijeet Dutta"},"headRefName":"abhi-create-recreq-delete","number":70,"title":"Abhi create recreq delete","url":"https://github.com/ucsb-cs156-s26/team01-s26-14/pull/70"}]
+pull_requests: [{"author":{"id":"U_kgDOCujYag","is_bot":false,"login":"AbhijeetDutta1","name":"Abhijeet Dutta"},"headRefName":"abhi-create-recreq-delete","number":70,"title":"Abhi create recreq delete","url":"https://github.com/ucsb-cs156-s26/team01-s26-14/pull/70"}]
