@@ -295,6 +295,8 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     // arrange
     LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
     LocalDateTime ldt2 = LocalDateTime.parse("2022-03-03T00:00:00");
+    LocalDateTime ldt3 = LocalDateTime.parse("2023-06-15T00:00:00");
+    LocalDateTime ldt4 = LocalDateTime.parse("2023-09-01T00:00:00");
 
     RecommendationRequest originalRequest =
         RecommendationRequest.builder()
@@ -311,8 +313,8 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
             .requesterEmail("updated@example.com")
             .professorEmail("updatedProf@example.com")
             .explanation("Updated explanation")
-            .dateRequested(ldt1)
-            .dateNeeded(ldt2)
+            .dateRequested(ldt3)
+            .dateNeeded(ldt4)
             .done(true)
             .build();
 
